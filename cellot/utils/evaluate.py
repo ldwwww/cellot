@@ -267,6 +267,7 @@ def grab_treated_cells_for_random_model(config, setting):
 
 
 def load_conditions(expdir, where, setting, embedding=None):
+    print(f"load-conditon:{expdir}\n")
     if embedding is None and (expdir.parent / "model-cellot" / "config.yaml").exists():
         embedding = read_embedding_context(
             load_config(expdir.parent / "model-cellot" / "config.yaml")

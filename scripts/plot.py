@@ -1,3 +1,4 @@
+import sys
 from absl import app, flags
 import os
 from pathlib import Path
@@ -5,6 +6,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import yaml
 import pandas as pd
+import sys
+
+sys.path.append("D:\pythonDev\cellot")
+
 from cellot.utils import viz
 from cellot.utils import load_config
 from cellot.data.cell import read_single_anndata
@@ -30,9 +35,10 @@ flags.DEFINE_enum(
 
 flags.DEFINE_boolean("logscale", False, "Run marginals in logscale")
 
-
 def load_single_dfs(expdir, setting="iid", where="data_space", n_markers=None):
     assert setting == "iid" or setting == "ood"
+    print("hello world\n")
+    print(f"load_single_dfs{expdir}\n")
 
     control, treated, imputed = load_conditions(expdir, where, setting)
     imputed = imputed.to_df()
@@ -108,24 +114,27 @@ def plot_umaps(config, evaldir, outdir, setting="iid", where="data_space"):
     models = config["umaps"]["models"]
     for model in models:
         umaps[model] = load_single_umap(evaldir / f"model-{model}", setting, where)
+        # print(evaldir / f"model-{model}")
     viz.plot_umaps_binary(umaps)
     plt.tight_layout()
     plt.savefig(outdir / "umaps.pdf", bbox_inches="tight")
     plt.close()
-
 
 def plot_knn_mmd(config, evaldir, outdir, setting="iid", where="data_space"):
     # compute knn enrichment
     knn = dict()
 
     for model in config["enrichment"]["models"]:
+
         path = (
             evaldir
             / f"model-{model}"
             / f"evals_{setting}_{where}"
-            / "knn_enrichment.csv"
+            / "k50_enrichment.csv"  #change to self-def file
         )
+
         if not path.exists():
+            print(f"{path} does not exist")
             continue
         knn[model] = pd.read_csv(path, index_col=0)
 
@@ -273,44 +282,20 @@ def main(argv):
         marginals:
             models:
                 - cellot
-                - cae
-                - scgen
-
-            order: [cellot, treated, control, cae, scgen]
+            order: [cellot]
             colors:
                 cellot: '#F2545B'
-                treated: '#114083'
-                control: '#A7BED3'
-                cae: '#9A8F97'
-                scgen: '#C3BABA'
-
-        umaps:
-            models:
-                - cellot
-                - cae
-                - scgen
-                - random
-                - identity
 
         enrichment:
             models:
                 - cellot
-                - cae
-                - scgen
-                - random
-                - identity
-
             k: 50
 
         mmd:
             models:
                 - cellot
-                - cae
-                - scgen
-                - random
-                - identity
+            gamma: 0.05
 
-            gamma: []
     """
 
     config_plotting = yaml.load(config_plotting, yaml.UnsafeLoader)
@@ -326,12 +311,12 @@ def main(argv):
         os.makedirs(outdir)
 
     if not FLAGS.comparison_only:
-        dfs = get_dfs(evaldir, config_plotting, setting, where, n_markers)
-        print("Plotting marginals.")
-        plot_marginals(config_plotting, dfs, outdir, logscale=FLAGS.logscale)
+        # dfs = get_dfs(evaldir, config_plotting, setting, where, n_markers)
+        # print("Plotting marginals.")
+        # plot_marginals(config_plotting, dfs, outdir, logscale=FLAGS.logscale)
 
-        print("Plotting UMAPS.")
-        plot_umaps(config_plotting, evaldir, outdir, setting, where)
+        # print("Plotting UMAPS.")
+        # plot_umaps(config_plotting, evaldir, outdir, setting, where)
 
         print("Plotting kNN Enrichment and MMD Evaluation.")
         plot_knn_mmd(config_plotting, evaldir, outdir, setting, where)

@@ -2,6 +2,8 @@ import sys
 from collections import namedtuple
 import yaml
 from absl import app, flags
+
+sys.path.append("../cellot")
 import cellot.train
 from cellot.train.experiment import prepare
 

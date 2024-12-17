@@ -1,0 +1,41 @@
+marginals:
+    models:
+        - cellot
+        - cae
+        - scgen
+
+    order: [cellot, treated, control, cae, scgen]
+    colors:
+        cellot: '#F2545B'
+        treated: '#114083'
+        control: '#A7BED3'
+        cae: '#9A8F97'
+        scgen: '#C3BABA'
+
+umaps:
+    models:
+        - cellot
+        - cae
+        - scgen
+        - random
+        - identity
+
+enrichment:
+    models:
+        - cellot
+        - cae
+        - scgen
+        - random
+        - identity
+
+    k: 50
+
+mmd:
+    models:
+        - cellot
+        - cae
+        - scgen
+        - random
+        - identity
+
+    gamma: []

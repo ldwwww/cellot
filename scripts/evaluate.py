@@ -2,6 +2,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from absl import app, flags
+
+import sys
+sys.path.append("../cellot")
 from cellot.utils.evaluate import (
     load_conditions,
     compute_knn_enrichment,
@@ -60,6 +63,7 @@ def compute_pairwise_corrs(df):
 def compute_evaluations(iterator):
     gammas = np.logspace(1, -3, num=50)
     for ncells, nfeatures, treated, imputed in iterator:
+        # print(treated.shape[1])
         mut, mui = treated.mean(0), imputed.mean(0)
         stdt, stdi = treated.std(0), imputed.std(0)
         pwct = compute_pairwise_corrs(treated)
@@ -129,6 +133,7 @@ def main(argv):
 
         def load_markers():
             data = read_single_anndata(config, path=None)
+            print(data.varm)
             key = f'marker_genes-{config.data.condition}-rank'
 
             # rebuttal preprocessing stored marker genes using

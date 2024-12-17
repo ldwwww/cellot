@@ -1,0 +1,18 @@
+data:
+  type: cell
+  source: control
+  target: stimulated
+  condition: condition
+  path: ./scgen-datasets/pbmc-combine-sub.h5ad
+
+datasplit:
+  # holdout:
+  #   sample_id: 101
+  groupby: condition
+  name: train_test
+  test_size: 0.1
+  random_state: 0
+
+dataloader:
+  batch_size: 64
+  shuffle: true
